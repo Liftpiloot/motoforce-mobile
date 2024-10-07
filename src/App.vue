@@ -2,15 +2,7 @@
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <h1>Hello World</h1>
-    </div>
-  </header>
-
-  <main>
-    <h1>Hello world</h1>
-  </main>
+<router-view></router-view>
 </template>
 
 <style scoped>
