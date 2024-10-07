@@ -34,6 +34,15 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --Background-color: #272727;
+
+  --Primary-gradient: linear-gradient(68deg, #2200AC 11.4%, #7F2CBC 50.14%, #C900B8 88.87%);
+
+  --Primary-solid: #4F15B4;
+
+  --Text-color: #E5E5E5;
+
 }
 
 @media (prefers-color-scheme: dark) {
