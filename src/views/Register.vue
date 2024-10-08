@@ -6,8 +6,11 @@ const password = ref('')
 const email = ref('')
 const name = ref('')
 const errorMessage = ref('')
+const loading = ref(false)
 
 const register = async () => {
+  errorMessage.value = '';
+  loading.value = true;
   try {
     const response = await fetch(`${API_URL}/Register`, {
       method: 'POST',
@@ -27,12 +30,26 @@ const register = async () => {
     if (!response.ok) {
       throw new Error(await response.text());
     }
-    const userData = await response.json();
-    console.log('User data:', userData);
-    // Handle the user data as needed
+    await login();
   } catch (error) {
     console.error('There was a problem with the register request:', error);
     errorMessage.value = 'An error occurred. PLease try again';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const login = async () => {
+  try {
+    const response = await fetch(`${API_URL}/Login?identifier=${name.value}&password=${password.value}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const userData = await response.json();
+    localStorage.setItem('user', JSON.stringify(userData));
+    window.location.href = '/dashboard';
+  } catch (error) {
+    errorMessage.value = 'Your account was created, but there was a problem logging in. Please try logging in manually.';
   }
 };
 
@@ -40,7 +57,7 @@ const register = async () => {
 
 <template>
   <div class="window">
-  <div class="moto-force-icon">
+  <div :class="['moto-force-icon', {loading}]">
     <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon" />
   </div>
   <div class="register-container">
@@ -48,7 +65,7 @@ const register = async () => {
       <div class="register-title">
         <h1>Create your account</h1>
       </div>
-    <form @submit.prevent="register">
+    <form @submit.prevent="register" class="register-form">
       <div class="name-div">
         <label for="name">Name:</label>
         <input type="text" id="name" v-model="name" required />
@@ -73,12 +90,11 @@ const register = async () => {
 
 .window {
   display: flex;
-  //width: 22.5rem;
-  height: 50rem;
   flex-direction: column;
   align-items: center;
   gap: 0.625rem;
   color: var(--Text-color);
+  font-weight: 800;
 }
 
 .moto-force-icon {
@@ -98,11 +114,24 @@ const register = async () => {
     gap: 0.625rem;
   }
 }
+.moto-force-icon.loading img {
+  animation: neon 5s infinite;
+}
+
+@keyframes neon {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    filter: hue-rotate(360deg);
+  }
+  100% {
+    filter: hue-rotate(0deg);
+  }
+}
 
 .register-container{
   display: flex;
-  width: 22.5rem;
-  height: 37.25rem;
   padding: 3.125rem 0.625rem;
   flex-direction: column;
   justify-content: space-between;
@@ -115,6 +144,7 @@ const register = async () => {
   flex-direction: column;
   align-items: center;
   gap: 0.625rem;
+  width: 100%;
 }
 
 .register-title{
@@ -123,7 +153,8 @@ const register = async () => {
   align-items: center;
   gap: 0.625rem;
   color: var(--Text-color);
-  font-size: small;
+  text-align: center;
+  width: 100%;
 }
 
 .name-div, .email-div, .password-div{
@@ -131,6 +162,7 @@ const register = async () => {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.625rem;
+  width: 100%;
 }
 
 input {
@@ -140,7 +172,6 @@ input {
   border-radius: 1rem;
   border: 1px solid var(--Text-color, #E5E5E5);
   padding: 0.625rem;
-
   background: var(--Background-color, #FFFFFF);
   color: var(--Text-color);
 }
@@ -154,8 +185,8 @@ input {
   all: unset;
   margin-top: 1rem;
   display: flex;
-  width: 9.6875rem;
-  padding: 0.25rem 1.75rem;
+  width: 100%;
+  padding: 0.25rem 0;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
@@ -167,13 +198,14 @@ input {
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   font-style: normal;
-  font-weight: 900;
+  font-weight: 700;
   line-height: normal;
 }
 
 .register-button:active {
   transform: translateY(2px);
 }
+
 
 
 </style>

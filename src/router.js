@@ -4,7 +4,7 @@ import Login from './views/Login.vue';
 import Register from "@/views/Register.vue";
 
 const routes = [
-    { path: '/', redirect: '/login' },
+    { path: '/', redirect: '/register' },
     { path: '/login', component: Login },
     {path: '/register', component: Register},
 ];
@@ -16,7 +16,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.path === '/') {
-        next('/login');
+        next('/register');
     } else {
         next();
     }
