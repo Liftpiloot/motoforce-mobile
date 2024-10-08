@@ -95,6 +95,7 @@ const login = async () => {
   gap: 0.625rem;
   color: var(--Text-color);
   font-weight: 800;
+  height: 100vh;
 }
 
 .moto-force-icon {
@@ -200,6 +201,12 @@ input {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  transition: 0.1s;
+}
+
+.register-button:hover {
+  background: var(--Primary-hover, #6A1CB4);
+  cursor: pointer;
 }
 
 .register-button:active {
