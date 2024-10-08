@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import {API_URL} from "@/config.js";
 
 const password = ref('')
@@ -57,32 +57,36 @@ const login = async () => {
 
 <template>
   <div class="window">
-  <div :class="['moto-force-icon', {loading}]">
-    <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon" />
-  </div>
-  <div class="register-container">
-    <div class="register-form">
-      <div class="register-title">
-        <h1>Create your account</h1>
-      </div>
-    <form @submit.prevent="register" class="register-form">
-      <div class="name-div">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="name" required />
-      </div>
-      <div class="email-div">
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required />
-      </div>
-      <div class="password-div">
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required />
-      </div>
-      <button type="submit" class="register-button">Sign up</button>
-    </form>
-      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div :class="['moto-force-icon', {loading}]">
+      <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon"/>
     </div>
-  </div>
+    <div class="register-container">
+      <div class="register-form">
+        <div class="register-title">
+          <h1>Create your account</h1>
+        </div>
+        <form @submit.prevent="register" class="register-form">
+          <div class="name-div">
+            <label for="name">Name:</label>
+            <input type="text" id="name" v-model="name" required/>
+          </div>
+          <div class="email-div">
+            <label for="email">Email:</label>
+            <input type="email" id="email" v-model="email" required/>
+          </div>
+          <div class="password-div">
+            <label for="password">Password:</label>
+            <input type="password" id="password" v-model="password" required/>
+          </div>
+          <button type="submit" class="register-button">Sign up</button>
+        </form>
+        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </div>
+    </div>
+    <div class="login-container">
+      <div>Already have an account?</div>
+      <router-link to="/login" class="login-text">Login</router-link>
+    </div>
   </div>
 </template>
 
@@ -115,6 +119,7 @@ const login = async () => {
     gap: 0.625rem;
   }
 }
+
 .moto-force-icon.loading img {
   animation: neon 5s infinite;
 }
@@ -131,7 +136,7 @@ const login = async () => {
   }
 }
 
-.register-container{
+.register-container {
   display: flex;
   padding: 3.125rem 0.625rem;
   flex-direction: column;
@@ -139,7 +144,7 @@ const login = async () => {
   align-items: center;
 }
 
-.register-form{
+.register-form {
   display: flex;
   padding: 0.625rem;
   flex-direction: column;
@@ -148,7 +153,7 @@ const login = async () => {
   width: 100%;
 }
 
-.register-title{
+.register-title {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -158,7 +163,7 @@ const login = async () => {
   width: 100%;
 }
 
-.name-div, .email-div, .password-div{
+.name-div, .email-div, .password-div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -177,7 +182,7 @@ input {
   color: var(--Text-color);
 }
 
-.error-message{
+.error-message {
   color: var(--Text-color);
   margin-top: 1rem;
 }
@@ -213,6 +218,25 @@ input {
   transform: translateY(2px);
 }
 
+.login-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.login-text {
+  all:unset;
+  background: -webkit-linear-gradient(68deg, #2200AC 11.4%, #7F2CBC 50.14%, #C900B8 88.87%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  margin-left: 0.3125rem;
+  cursor: pointer;
+}
+
+.login-text:hover {
+  text-decoration: underline;
+}
 
 
 </style>
