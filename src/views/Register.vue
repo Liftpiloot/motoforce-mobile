@@ -5,6 +5,7 @@ import {API_URL} from "@/config.js";
 const password = ref('')
 const email = ref('')
 const name = ref('')
+const errorMessage = ref('')
 
 const register = async () => {
   try {
@@ -19,20 +20,26 @@ const register = async () => {
         password: password.value,
       }),
     });
+    if (response.status === 409) {
+      errorMessage.value = 'Username or email already exists';
+      return;
+    }
     if (!response.ok) {
-      throw new Error(response.text());
+      throw new Error(await response.text());
     }
     const userData = await response.json();
     console.log('User data:', userData);
     // Handle the user data as needed
   } catch (error) {
     console.error('There was a problem with the register request:', error);
+    errorMessage.value = 'An error occurred. PLease try again';
   }
 };
 
 </script>
 
 <template>
+  <div class="window">
   <div class="moto-force-icon">
     <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon" />
   </div>
@@ -54,18 +61,29 @@ const register = async () => {
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <button type="submit" class="register-button">Register</button>
+      <button type="submit" class="register-button">Sign up</button>
     </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
+  </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 
+.window {
+  display: flex;
+  //width: 22.5rem;
+  height: 50rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  color: var(--Text-color);
+}
+
 .moto-force-icon {
   display: flex;
   width: 22.5rem;
-  height: 12.75rem;
   padding: 0.75rem 0rem;
   flex-direction: column;
   justify-content: center;
@@ -95,7 +113,7 @@ const register = async () => {
   display: flex;
   padding: 0.625rem;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.625rem;
 }
 
@@ -105,6 +123,7 @@ const register = async () => {
   align-items: center;
   gap: 0.625rem;
   color: var(--Text-color);
+  font-size: small;
 }
 
 .name-div, .email-div, .password-div{
@@ -123,16 +142,23 @@ input {
   padding: 0.625rem;
 
   background: var(--Background-color, #FFFFFF);
+  color: var(--Text-color);
+}
+
+.error-message{
+  color: var(--Text-color);
+  margin-top: 1rem;
 }
 
 .register-button {
+  all: unset;
+  margin-top: 1rem;
   display: flex;
   width: 9.6875rem;
   padding: 0.25rem 1.75rem;
   justify-content: center;
   align-items: center;
   gap: 0.625rem;
-  all: unset;
   border-radius: 1rem;
   background: var(--Primary-solid, #4F15B4);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -143,6 +169,10 @@ input {
   font-style: normal;
   font-weight: 900;
   line-height: normal;
+}
+
+.register-button:active {
+  transform: translateY(2px);
 }
 
 
