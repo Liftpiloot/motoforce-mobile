@@ -7,6 +7,8 @@ const email = ref('')
 const name = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
+import InputField from "@/components/UI/InputField.vue";
+import StandardButton from "@/components/UI/StandardButton.vue";
 
 const register = async () => {
   errorMessage.value = '';
@@ -66,19 +68,10 @@ const login = async () => {
           <h1>Create your account</h1>
         </div>
         <form @submit.prevent="register" class="register-form">
-          <div class="name-div">
-            <label for="name">Name:</label>
-            <input type="text" id="name" v-model="name" required/>
-          </div>
-          <div class="email-div">
-            <label for="email">Email:</label>
-            <input type="email" id="email" v-model="email" required/>
-          </div>
-          <div class="password-div">
-            <label for="password">Password:</label>
-            <input type="password" id="password" v-model="password" required/>
-          </div>
-          <button type="submit" class="register-button">Sign up</button>
+            <InputField v-model="name" :label="true" :label-text="'Name:'"/>
+            <InputField v-model="email" :label="true" :label-text="'Email:'"/>
+            <InputField v-model="password" :label="true" :label-text="'Password:'" type="password"/>
+            <StandardButton :type="'positive'" :content="'Sign up'"></StandardButton>
         </form>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
       </div>
@@ -163,59 +156,9 @@ const login = async () => {
   width: 100%;
 }
 
-.name-div, .email-div, .password-div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.625rem;
-  width: 100%;
-}
-
-input {
-  height: 1.5625rem;
-  flex-shrink: 0;
-  align-self: stretch;
-  border-radius: 1rem;
-  border: 1px solid var(--Text-color, #E5E5E5);
-  padding: 0.625rem;
-  background: var(--Background-color, #FFFFFF);
-  color: var(--Text-color);
-}
-
 .error-message {
   color: var(--Text-color);
   margin-top: 1rem;
-}
-
-.register-button {
-  all: unset;
-  margin-top: 1rem;
-  display: flex;
-  width: 100%;
-  padding: 0.25rem 0;
-  justify-content: center;
-  align-items: center;
-  gap: 0.625rem;
-  border-radius: 1rem;
-  background: var(--Primary-solid, #4F15B4);
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-
-  color: var(--Text-color);
-  font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  transition: 0.1s;
-}
-
-.register-button:hover {
-  background: var(--Primary-hover, #6A1CB4);
-  cursor: pointer;
-}
-
-.register-button:active {
-  transform: translateY(2px);
 }
 
 .login-container {
