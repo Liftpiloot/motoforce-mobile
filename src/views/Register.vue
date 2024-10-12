@@ -63,18 +63,16 @@ const login = async () => {
       <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon"/>
     </div>
     <div class="register-container">
-      <div class="register-form">
-        <div class="register-title">
-          <h1>Create your account</h1>
-        </div>
-        <form @submit.prevent="register" class="register-form">
-            <InputField v-model="name" :label="true" :label-text="'Name:'"/>
-            <InputField v-model="email" :label="true" :label-text="'Email:'"/>
-            <InputField v-model="password" :label="true" :label-text="'Password:'" type="password"/>
-            <StandardButton :type="'positive'" :content="'Sign up'"></StandardButton>
-        </form>
-        <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div class="register-title">
+        <h1>Create your account</h1>
       </div>
+      <form @submit.prevent="register" class="register-form">
+        <InputField v-model="name" :label="true" :label-text="'Name:'"/>
+        <InputField v-model="email" :label="true" :label-text="'Email:'"/>
+        <InputField v-model="password" :label="true" :label-text="'Password:'" type="password"/>
+        <StandardButton :type="'positive'" :content="'Sign up'"></StandardButton>
+      </form>
+      <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </div>
     <div class="login-container">
       <div>Already have an account?</div>
@@ -135,6 +133,8 @@ const login = async () => {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  width: 75%;
+  max-width: 22.5rem;
 }
 
 .register-form {
@@ -167,7 +167,7 @@ const login = async () => {
 }
 
 .login-text {
-  all:unset;
+  all: unset;
   background: -webkit-linear-gradient(68deg, #2200AC 11.4%, #7F2CBC 50.14%, #C900B8 88.87%);
   background-clip: text;
   -webkit-background-clip: text;
