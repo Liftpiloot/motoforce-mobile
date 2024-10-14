@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import {API_URL} from "@/config.js";
 import InputField from "@/components/UI/InputField.vue";
 import StandardButton from "@/components/UI/StandardButton.vue";
 
 const username = ref('')
 const password = ref('')
+const rememberMe = ref(false)
 
 const errorMessage = ref('')
 const loading = ref(false)
@@ -24,7 +25,13 @@ const login = async () => {
     }
     const userData = await response.json();
     console.log('User data:', userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+
+    if (rememberMe.value) {
+      localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+      localStorage.removeItem('user');
+      sessionStorage.setItem('user', JSON.stringify(userData));
+    }
     window.location.href = '/dashboard';
   } catch (error) {
     errorMessage.value = 'An error occurred. Please try again';
@@ -32,6 +39,12 @@ const login = async () => {
     loading.value = false;
   }
 };
+
+onMounted(() => {
+  if (localStorage.getItem('user')) {
+    window.location.href = '/dashboard';
+  }
+});
 </script>
 
 <template>
@@ -46,6 +59,10 @@ const login = async () => {
         <form @submit.prevent="login" class="login-form">
           <InputField v-model="username" :label="true" :label-text="'Name/Email:'"/>
           <InputField v-model="password" :label="true" :label-text="'Password:'" type="password"/>
+          <div class="remember-me">
+            <input type="checkbox" id="rememberMe" v-model="rememberMe"/>
+            <label for="rememberMe">Remember me</label>
+          </div>
           <StandardButton :type="'positive'" :content="'Login'"></StandardButton>
         </form>
         <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
@@ -120,6 +137,18 @@ const login = async () => {
   align-items: center;
   gap: 0.625rem;
   width: 100%;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
 }
 
 .login-title {
