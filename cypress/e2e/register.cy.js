@@ -26,4 +26,11 @@ describe('Register Functionality', () => {
         // Assert that the error message is displayed
         cy.get('.error-message').should('contain', 'Username or email already exists');
     });
+
+    it('should redirect to the login page when the login link is clicked', () => {
+        cy.get('a').contains('Login').click();
+
+        // Assert that the user is redirected to the login page
+        cy.url().should('include', '/login');
+    });
 });
