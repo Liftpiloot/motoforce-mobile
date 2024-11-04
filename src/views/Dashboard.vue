@@ -8,10 +8,15 @@ import {calculateSpeed} from "@/scripts/calculateSpeed";
 import {postDataPoints} from "@/scripts/postDataPoints";
 import {calculateLateralG} from "@/scripts/calculateLateralG";
 import {calculateLean} from "@/scripts/calculateLean";
+import ScoreCircle from "@/components/UI/ScoreCircle.vue";
 
 const route = ref<dataPoint[]>([]);
 const isTracking = ref(false);
 const watchId = ref<number | null>(null);
+
+const maxLean = 42.2;
+const maxG = 0.6;
+const maxSpeed = 222;
 
 const startTracking = async () => {
   let user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -97,14 +102,22 @@ const toggleTracking = async () => {
 </script>
 
 <template>
+  <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
   <div class="window">
-    <StandardButton :type="'positive'" :content="isTracking ? 'Stop tracking' : 'Start new lap'" :action="toggleTracking"></StandardButton>
-    <div>
-      <p>Tracking: {{isTracking}}</p>
-      <p>Route: {{route.length}}</p>
-      <P>LastPoint: {{route[route.length - 1]}}</P>
-      <P id="error">Error: </P>
+    <div class="stats">
+      <ScoreCircle :score="maxLean" :maxScore="45" :isHighScore="true" name="Max lean"></ScoreCircle>
+      <ScoreCircle :score="maxG" :maxScore="1" :isHighScore="false" name="Max G"></ScoreCircle>
+      <ScoreCircle :score="maxSpeed" :maxScore="300" :isHighScore="false" name="Max speed"></ScoreCircle>
     </div>
+    <div class="trackingButton">
+      <StandardButton :type="'positive'" :content="isTracking ? 'Stop tracking' : 'Start new lap'" :action="toggleTracking"></StandardButton>
+    </div>
+<!--    <div>-->
+<!--      <p>Tracking: {{isTracking}}</p>-->
+<!--      <p>Route: {{route.length}}</p>-->
+<!--      <P>LastPoint: {{route[route.length - 1]}}</P>-->
+<!--      <P id="error">Error: </P>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -117,5 +130,14 @@ const toggleTracking = async () => {
   color: var(--Text-color);
   font-weight: 800;
   height: 100vh;
+  font-family: Inter;
+}
+
+.stats{
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.5625rem;
+  align-self: stretch;
 }
 </style>

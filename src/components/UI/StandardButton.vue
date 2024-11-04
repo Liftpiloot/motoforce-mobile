@@ -32,7 +32,7 @@ button {
   all: unset;
   margin-top: 1rem;
   display: flex;
-  width: 100%;
+  width: 9.6875rem;
   padding: 0.25rem 0;
   justify-content: center;
   align-items: center;
