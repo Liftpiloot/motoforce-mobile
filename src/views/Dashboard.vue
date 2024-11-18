@@ -9,14 +9,17 @@ import {postDataPoints} from "@/scripts/postDataPoints";
 import {calculateLateralG} from "@/scripts/calculateLateralG";
 import {calculateLean} from "@/scripts/calculateLean";
 import ScoreCircle from "@/components/UI/ScoreCircle.vue";
+import router from "@/router";
+import { errorMessages } from "vue/compiler-sfc";
+import Popup from "@/components/UI/Popup.vue";
+
 
 const route = ref<dataPoint[]>([]);
+let routeId = 0;
 const isTracking = ref(false);
 const watchId = ref<number | null>(null);
+const errorMessage = ref<string | null>(null);
 
-const maxLean = 42.2;
-const maxG = 0.6;
-const maxSpeed = 222;
 
 const startTracking = async () => {
   let user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -24,9 +27,7 @@ const startTracking = async () => {
   if (user.id === undefined) {
     user = JSON.parse(sessionStorage.getItem('user') || '{}');
   }
-  console.log("Userid = : " + user.id);
-  const routeId = await postRoute(user.id);
-  console.log('Start tracking');
+  routeId = await postRoute(user.id);
   watchId.value = watchGpsData(
       (location) => {
         const dataPoint: dataPoint = {
@@ -56,24 +57,9 @@ const startTracking = async () => {
 
       },
       (error) => {
-        const errorElement = document.getElementById('error');
-        if (errorElement !== null) {
-          errorElement.innerText = error.message;
-        }
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            console.error("Permission denied");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.error("Position unavailable");
-            break;
-          case error.TIMEOUT:
-            console.error("Request timed out");
-            break;
-          default:
-            console.error("Unknown error occurred");
-            break;
-        }
+        console.error('Error:', error);
+        errorMessage.value = error.message;
+        stopTracking();
       }
   );
   isTracking.value = true;
@@ -90,6 +76,9 @@ const stopTracking = () => {
     route.value = [];
   }
   isTracking.value = false;
+  if (errorMessage.value === null) {
+    router.push({name: 'Result', params: {routeId: routeId}});
+  }
 }
 
 const toggleTracking = async () => {
@@ -99,25 +88,29 @@ const toggleTracking = async () => {
     await startTracking();
   }
 }
+
+const clearError = () => {
+  errorMessage.value = null;
+  router.push({name: 'Result', params: {routeId: routeId}});
+}
+
 </script>
 
 <template>
   <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
   <div class="window">
-    <div class="stats">
-      <ScoreCircle :score="maxLean" :maxScore="45" :isHighScore="true" name="Max lean"></ScoreCircle>
-      <ScoreCircle :score="maxG" :maxScore="1" :isHighScore="false" name="Max G"></ScoreCircle>
-      <ScoreCircle :score="maxSpeed" :maxScore="300" :isHighScore="false" name="Max speed"></ScoreCircle>
-    </div>
+
     <div class="trackingButton">
       <StandardButton :type="'positive'" :content="isTracking ? 'Stop tracking' : 'Start new lap'" :action="toggleTracking"></StandardButton>
     </div>
-<!--    <div>-->
-<!--      <p>Tracking: {{isTracking}}</p>-->
-<!--      <p>Route: {{route.length}}</p>-->
-<!--      <P>LastPoint: {{route[route.length - 1]}}</P>-->
-<!--      <P id="error">Error: </P>-->
-<!--    </div>-->
+
+    <popup v-if="errorMessage" :type="'negative'">
+      <template #header>Error</template>
+      <template #default>{{errorMessage}}</template>
+      <template #footer>
+        <StandardButton :type="'negative'" :content="'Ok'" :action="clearError"></StandardButton>
+      </template>
+    </popup>
   </div>
 </template>
 
@@ -133,11 +126,4 @@ const toggleTracking = async () => {
   font-family: Inter;
 }
 
-.stats{
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1.5625rem;
-  align-self: stretch;
-}
 </style>
