@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ScoreCircle from "@/components/UI/ScoreCircle.vue";
-import {h, onMounted, ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {ComposableRoute, Route} from "@/scripts/composableRoute";
 import Popup from "@/components/UI/Popup.vue";
@@ -16,9 +16,9 @@ let maxLean = ref(0);
 let maxG = ref(0);
 let maxSpeed = ref(0);
 
-let highscoreSpeed = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
-let highscoreLean = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
-let highscoreG = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
+let highscoreSpeed = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
+let highscoreLean = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
+let highscoreG = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
 
 const errorMessage = ref<string | null>(null);
 const emptyRoute = ref(false);
@@ -61,7 +61,6 @@ async function getMaxG() {
 }
 
 
-
 onMounted(async () => {
   loading.value = true;
   try {
@@ -77,13 +76,12 @@ onMounted(async () => {
     await getMaxLean();
     await getMaxG();
 
-  }
-  catch (error) {
+  } catch (error) {
     errorMessage.value = 'An error occurred. Please try again';
-  }
-  finally {
+  } finally {
     loading.value = false;
   }
+  drawMap();
 });
 
 const deleteRoute = async () => {
@@ -92,13 +90,53 @@ const deleteRoute = async () => {
     const composableRoute = ComposableRoute();
     await composableRoute.deleteRoute(routeId);
     router.push({name: 'Dashboard'});
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error.message);
     errorMessage.value = 'An error occurred. Please try again';
-  }
-  finally {
+  } finally {
     loading.value = false;
+  }
+};
+
+const drawMap = () => {
+  var canvas = document.body.querySelector("#map") as HTMLCanvasElement;
+  var ctx = canvas.getContext("2d");
+
+  // Function to transform latitude and longitude to canvas coordinates
+  function transformCoordinates(lat: number, lon: number, minLat: number, maxLat: number, minLon: number, maxLon: number, canvasWidth: number, canvasHeight: number) {
+    const x = ((lon - minLon) / (maxLon - minLon)) * canvasWidth;
+    const y = canvasHeight - ((lat - minLat) / (maxLat - minLat)) * canvasHeight;
+    return { x, y };
+  }
+
+  // Draw the route on the map
+  function drawRoute(route: Route) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+
+    const lats = route.dataPoints.map(point => point.lat);
+    const lons = route.dataPoints.map(point => point.lon);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLon = Math.min(...lons);
+    const maxLon = Math.max(...lons);
+
+    const startPoint = transformCoordinates(route.dataPoints[0].lat, route.dataPoints[0].lon, minLat, maxLat, minLon, maxLon, canvas.width, canvas.height);
+    ctx.moveTo(startPoint.x, startPoint.y);
+
+    route.dataPoints.forEach((point) => {
+      const { x, y } = transformCoordinates(point.lat, point.lon, minLat, maxLat, minLon, maxLon, canvas.width, canvas.height);
+      ctx.lineTo(x, y);
+    });
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Call drawRoute with the current route
+  if (route.value) {
+    drawRoute(route.value);
   }
 };
 
@@ -108,19 +146,26 @@ const deleteRoute = async () => {
   <div class="window">
     <logo :loading="loading"/>
     <div class="stats">
-      <ScoreCircle :score="maxLean" :maxScore="highscoreLean.score" :isHighScore="highscoreLean.isHighScore" name="Max lean"></ScoreCircle>
-      <ScoreCircle :score="maxG" :maxScore="highscoreG.score" :isHighScore="highscoreG.isHighScore" name="Max G"></ScoreCircle>
-      <ScoreCircle :score="maxSpeed" :maxScore="highscoreSpeed.score" :isHighScore="highscoreSpeed.isHighScore" name="Max speed"></ScoreCircle>
+      <ScoreCircle :score="maxLean" :maxScore="highscoreLean.score" :isHighScore="highscoreLean.isHighScore"
+                   name="Max lean"></ScoreCircle>
+      <ScoreCircle :score="maxG" :maxScore="highscoreG.score" :isHighScore="highscoreG.isHighScore"
+                   name="Max G"></ScoreCircle>
+      <ScoreCircle :score="maxSpeed" :maxScore="highscoreSpeed.score" :isHighScore="highscoreSpeed.isHighScore"
+                   name="Max speed"></ScoreCircle>
     </div>
-
+    <div class="map-container">
+      <canvas id="map"></canvas>
+    </div>
 
     <popup v-if="errorMessage" :type="'negative'">
       <template #header>Error</template>
-      <template #default>{{errorMessage}}</template>
+      <template #default>{{ errorMessage }}</template>
       <template #footer>
         <standard-button :type="'neutral'" :content="'Ok'" :action="clearError"></standard-button>
-        <standard-button :type="'positive'" :content="'Retry'" :action="() => this.$router.go(this.$router.currentRoute)"></standard-button>
-        <standard-button v-if="emptyRoute" :type="'negative'" :content="'Delete route'" :action="deleteRoute"></standard-button>
+        <standard-button :type="'positive'" :content="'Retry'"
+                         :action="() => this.$router.go(this.$router.currentRoute)"></standard-button>
+        <standard-button v-if="emptyRoute" :type="'negative'" :content="'Delete route'"
+                         :action="deleteRoute"></standard-button>
       </template>
     </popup>
   </div>
