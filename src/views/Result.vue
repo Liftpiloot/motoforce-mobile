@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ScoreCircle from "@/components/UI/ScoreCircle.vue";
-import {onMounted, ref} from "vue";
+import {h, onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import {ComposableRoute, Route} from "@/scripts/composableRoute";
 import Popup from "@/components/UI/Popup.vue";
@@ -16,12 +16,51 @@ let maxLean = ref(0);
 let maxG = ref(0);
 let maxSpeed = ref(0);
 
+let highscoreSpeed = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
+let highscoreLean = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
+let highscoreG = ref<{score:number, isHighScore:boolean}>({score: 0, isHighScore: false});
+
 const errorMessage = ref<string | null>(null);
 const emptyRoute = ref(false);
 
 const clearError = () => {
   errorMessage.value = null;
 };
+
+async function getMaxSpeed() {
+  const composableRoute = ComposableRoute();
+  const {maxSpeed: speed, highScore: highScore} = await composableRoute.getMaxSpeed(routeId);
+  if (speed >= highScore) {
+    highscoreSpeed.value = {score: speed, isHighScore: true};
+  } else {
+    highscoreSpeed.value = {score: highScore, isHighScore: false};
+  }
+  maxSpeed.value = Math.round(speed);
+}
+
+async function getMaxLean() {
+  const composableRoute = ComposableRoute();
+  const {maxLean: lean, highScore: highScore} = await composableRoute.getMaxLean(routeId);
+  if (lean >= highScore) {
+    highscoreLean.value = {score: lean, isHighScore: true};
+  } else {
+    highscoreLean.value = {score: highScore, isHighScore: false};
+  }
+  maxLean.value = Math.round(lean);
+}
+
+async function getMaxG() {
+  const composableRoute = ComposableRoute();
+  const {maxG: g, highScore: highScore} = await composableRoute.getMaxG(routeId);
+  if (g >= highScore) {
+    highscoreG.value = {score: g, isHighScore: true};
+  } else {
+    highscoreG.value = {score: highScore, isHighScore: false};
+  }
+  maxG.value = Math.round(g);
+}
+
+
 
 onMounted(async () => {
   loading.value = true;
@@ -34,9 +73,9 @@ onMounted(async () => {
       errorMessage.value = 'No data in route';
       return;
     }
-    maxSpeed.value = Math.round(await composableRoute.getMaxSpeed(routeId));
-    maxLean.value = Math.round(await composableRoute.getMaxLean(routeId));
-    maxG.value = Math.round(await composableRoute.getMaxG(routeId));
+    await getMaxSpeed();
+    await getMaxLean();
+    await getMaxG();
 
   }
   catch (error) {
@@ -69,9 +108,9 @@ const deleteRoute = async () => {
   <div class="window">
     <logo :loading="loading"/>
     <div class="stats">
-      <ScoreCircle :score="maxLean" :maxScore="45" :isHighScore="true" name="Max lean"></ScoreCircle>
-      <ScoreCircle :score="maxG" :maxScore="1" :isHighScore="false" name="Max G"></ScoreCircle>
-      <ScoreCircle :score="maxSpeed" :maxScore="300" :isHighScore="false" name="Max speed"></ScoreCircle>
+      <ScoreCircle :score="maxLean" :maxScore="highscoreLean.score" :isHighScore="highscoreLean.isHighScore" name="Max lean"></ScoreCircle>
+      <ScoreCircle :score="maxG" :maxScore="highscoreG.score" :isHighScore="highscoreG.isHighScore" name="Max G"></ScoreCircle>
+      <ScoreCircle :score="maxSpeed" :maxScore="highscoreSpeed.score" :isHighScore="highscoreSpeed.isHighScore" name="Max speed"></ScoreCircle>
     </div>
 
 

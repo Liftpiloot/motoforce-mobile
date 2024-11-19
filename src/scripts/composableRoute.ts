@@ -49,9 +49,8 @@ export const ComposableRoute = () => {
         if (!response.ok) {
             throw new Error("Failed to get route max speed");
         }
-        const { maxSpeed } = await response.json();
-        console.log(maxSpeed);
-        return maxSpeed;
+        const { maxSpeed, highScore } = await response.json();
+        return { maxSpeed, highScore };
     }
 
     async function getMaxLean(routeId: number): Promise<any> {
@@ -65,8 +64,8 @@ export const ComposableRoute = () => {
         if (!response.ok) {
             throw new Error("Failed to get route max lean");
         }
-        const { maxLean } = await response.json();
-        return maxLean;
+        const { maxLean, highScore } = await response.json();
+        return { maxLean, highScore };
     }
 
     async function getMaxG(routeId: number): Promise<any> {
@@ -80,8 +79,8 @@ export const ComposableRoute = () => {
         if (!response.ok) {
             throw new Error("Failed to get route max G");
         }
-        const { maxG } = await response.json();
-        return maxG;
+        const { maxG, highScore } = await response.json();
+        return { maxG, highScore };
     }
 
     return {
