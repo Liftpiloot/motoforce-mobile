@@ -3,6 +3,7 @@ import {onMounted, ref} from 'vue'
 import {API_URL} from "@/config.js";
 import InputField from "@/components/UI/InputField.vue";
 import StandardButton from "@/components/UI/StandardButton.vue";
+import Logo from "@/components/UI/Logo.vue";
 
 const username = ref('')
 const password = ref('')
@@ -49,9 +50,7 @@ onMounted(() => {
 
 <template>
   <div class="window">
-    <div :class="['moto-force-icon', {loading}]">
-      <img src="../components/icons/moto-force-icon.svg" alt="Moto Force Icon"/>
-    </div>
+    <Logo :loading="loading"/>
     <div class="login-container">
         <div class="login-title">
           <h1>Login</h1>

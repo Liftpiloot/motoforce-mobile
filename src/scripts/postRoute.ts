@@ -1,7 +1,6 @@
 import { API_URL } from "@/config.js";
 
 export const postRoute = async (userId: number) => {
-  console.log(userId);
   const response = await fetch(`${API_URL}/Route/postRoute?userId=${userId}`, {
     method: "POST",
     headers: {

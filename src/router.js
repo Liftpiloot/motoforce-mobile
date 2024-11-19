@@ -9,7 +9,11 @@ const routes = [
     { path: '/', redirect: '/register' },
     { path: '/login', component: Login },
     {path: '/register', component: Register},
-    {path : '/dashboard', component: Dashboard},
+    {
+        path : '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard
+    },
     {
         path: '/result/:routeId',
         name: 'Result',

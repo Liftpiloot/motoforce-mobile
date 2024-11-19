@@ -25,6 +25,19 @@ export const ComposableRoute = () => {
         return await response.json();
     }
 
+    async function deleteRoute(routeId: number): Promise<any> {
+        const response = await fetch(`${API_URL}/Route?routeId=${routeId}`, {
+            method: "DELETE",
+            headers: {
+                'content-type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete route");
+        }
+    }
+
     async function getMaxSpeed(routeId: number): Promise<any> {
         const response = await fetch(`${API_URL}/Route/MaxSpeed?routeId=${routeId}`, {
             method: "GET",
@@ -73,8 +86,9 @@ export const ComposableRoute = () => {
 
     return {
         get,
+        deleteRoute,
         getMaxSpeed,
         getMaxLean,
-        getMaxG
+        getMaxG,
     }
 }

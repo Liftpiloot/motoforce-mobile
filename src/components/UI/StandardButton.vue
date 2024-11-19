@@ -39,8 +39,6 @@ button {
   gap: 0.625rem;
   border-radius: 1rem;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-
-  font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 700;

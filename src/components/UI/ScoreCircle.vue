@@ -52,7 +52,6 @@ const props = defineProps({
 
 .score{
   color: var(--Text-color, #E5E5E5);
-  font-family: Inter;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 900;
@@ -61,7 +60,6 @@ const props = defineProps({
 
 .name{
   color: var(--Text-color, #E5E5E5);
-  font-family: Inter;
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 900;

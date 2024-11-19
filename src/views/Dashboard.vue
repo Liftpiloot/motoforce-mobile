@@ -12,6 +12,7 @@ import ScoreCircle from "@/components/UI/ScoreCircle.vue";
 import router from "@/router";
 import { errorMessages } from "vue/compiler-sfc";
 import Popup from "@/components/UI/Popup.vue";
+import Logo from "@/components/UI/Logo.vue";
 
 
 const route = ref<dataPoint[]>([]);
@@ -19,15 +20,41 @@ let routeId = 0;
 const isTracking = ref(false);
 const watchId = ref<number | null>(null);
 const errorMessage = ref<string | null>(null);
+const loading = ref(false);
 
 
-const startTracking = async () => {
+const getUser = () => {
   let user = JSON.parse(localStorage.getItem('user') || '{}');
   // get user from session storage if user is not in local storage
   if (user.id === undefined) {
     user = JSON.parse(sessionStorage.getItem('user') || '{}');
   }
-  routeId = await postRoute(user.id);
+  return user;
+}
+
+const startTracking = async () => {
+  loading.value = true;
+  const user = getUser();
+  if (user.id === undefined) {
+    errorMessage.value = 'User not found';
+    loading.value = false;
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    errorMessage.value = 'Geolocation is not available';
+    loading.value = false;
+    return;
+  }
+
+  try {
+    routeId = await postRoute(user.id);
+  }
+  catch (error) {
+    errorMessage.value = 'An error occurred. Please try again';
+    loading.value = false;
+    return;
+  }
   watchId.value = watchGpsData(
       (location) => {
         const dataPoint: dataPoint = {
@@ -57,8 +84,14 @@ const startTracking = async () => {
 
       },
       (error) => {
-        console.error('Error:', error);
-        errorMessage.value = error.message;
+        // check if route is empty
+        if (route.value.length > 0) {
+          postDataPoints(route.value);
+          errorMessage.value = error.message + '. Your route has been saved';
+        }
+        else {
+          errorMessage.value = error.message;
+        }
         stopTracking();
       }
   );
@@ -66,7 +99,6 @@ const startTracking = async () => {
 }
 
 const stopTracking = () => {
-  console.log('Stop tracking');
   if (watchId.value !== null){
     clearWatch(watchId.value);
     watchId.value = null;
@@ -75,6 +107,7 @@ const stopTracking = () => {
     postDataPoints(route.value);
     route.value = [];
   }
+  loading.value = false;
   isTracking.value = false;
   if (errorMessage.value === null) {
     router.push({name: 'Result', params: {routeId: routeId}});
@@ -91,15 +124,16 @@ const toggleTracking = async () => {
 
 const clearError = () => {
   errorMessage.value = null;
-  router.push({name: 'Result', params: {routeId: routeId}});
+  if (routeId !== 0) {
+    router.push({name: 'Result', params: {routeId: routeId}});
+  }
 }
 
 </script>
 
 <template>
-  <link href='https://fonts.googleapis.com/css?family=Inter' rel='stylesheet'>
   <div class="window">
-
+    <Logo :loading="loading"/>
     <div class="trackingButton">
       <StandardButton :type="'positive'" :content="isTracking ? 'Stop tracking' : 'Start new lap'" :action="toggleTracking"></StandardButton>
     </div>
@@ -123,7 +157,6 @@ const clearError = () => {
   color: var(--Text-color);
   font-weight: 800;
   height: 100vh;
-  font-family: Inter;
 }
 
 </style>
