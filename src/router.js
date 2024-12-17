@@ -4,6 +4,7 @@ import Login from './views/Login.vue';
 import Register from "@/views/Register.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Result from "@/views/Result.vue";
+import {DESKTOP_URL} from "@/config.js";
 
 const routes = [
     { path: '/', redirect: '/register' },
@@ -28,8 +29,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/') {
-        next('/register');
+    const user = JSON.parse(localStorage.getItem('user') || sessionStorage.getItem('user') || '{}');
+    if (to.path === '/dashboard' && !user) {
+        next('/login');
+    } else if (to.path === '/dashboard' && window.innerWidth > 1024) {
+        const userInfo = encodeURIComponent(JSON.stringify(user));
+        window.location.href = `${DESKTOP_URL}?user=${userInfo}`;
     } else {
         next();
     }
