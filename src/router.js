@@ -5,6 +5,7 @@ import Register from "@/views/Register.vue";
 import Dashboard from "@/views/Dashboard.vue";
 import Result from "@/views/Result.vue";
 import {DESKTOP_URL} from "@/config.js";
+import Friends from "@/views/Friends.vue";
 
 const routes = [
     { path: '/', redirect: '/register' },
@@ -20,6 +21,11 @@ const routes = [
         name: 'Result',
         component: Result,
         props: true,
+    },
+    {
+        path: '/friends',
+        name: 'Friends',
+        component: Friends,
     }
 ];
 

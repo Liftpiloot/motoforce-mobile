@@ -13,6 +13,7 @@ import router from "@/router";
 import { errorMessages } from "vue/compiler-sfc";
 import Popup from "@/components/UI/Popup.vue";
 import Logo from "@/components/UI/Logo.vue";
+import {getUser} from "@/scripts/getUser";
 
 
 const route = ref<dataPoint[]>([]);
@@ -21,16 +22,6 @@ const isTracking = ref(false);
 const watchId = ref<number | null>(null);
 const errorMessage = ref<string | null>(null);
 const loading = ref(false);
-
-
-const getUser = () => {
-  let user = JSON.parse(localStorage.getItem('user') || '{}');
-  // get user from session storage if user is not in local storage
-  if (user.id === undefined) {
-    user = JSON.parse(sessionStorage.getItem('user') || '{}');
-  }
-  return user;
-}
 
 const startTracking = async () => {
   loading.value = true;
@@ -129,6 +120,9 @@ const clearError = () => {
   }
 }
 
+const goToFriendsPage = () => {
+  router.push({ name: 'Friends' });
+};
 </script>
 
 <template>
@@ -136,6 +130,9 @@ const clearError = () => {
     <Logo :loading="loading"/>
     <div class="trackingButton">
       <StandardButton :type="'positive'" :content="isTracking ? 'Stop tracking' : 'Start new lap'" :action="toggleTracking"></StandardButton>
+    </div>
+    <div class="friendsButton">
+      <StandardButton :type="'positive'" :content="'Go to Friends Page'" :action="goToFriendsPage"></StandardButton>
     </div>
 
     <popup v-if="errorMessage" :type="'negative'">
