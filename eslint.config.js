@@ -2,6 +2,7 @@ import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint, { parser } from "typescript-eslint";
 import pluginVue from "eslint-plugin-vue";
+import pluginCypress from "eslint-plugin-cypress";
 
 /** @type {import('eslint').Linter.Config} */
 export default [
@@ -17,6 +18,7 @@ export default [
       js: pluginJs,
       vue: pluginVue,
       ts: tseslint,
+      cypress: pluginCypress,
     },
     rules: {
       ...pluginJs.configs.recommended.rules,
