@@ -20,10 +20,21 @@ export default [
       ts: tseslint,
       cypress: pluginCypress,
     },
+    env:{
+      'cypress/globals': true,
+      'vue/setup-compiler-macros': true,
+    },
+    extends:[
+        "eslint:recommended",
+        "plugin:vue/vue3-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:cypress/recommended",
+    ],
     rules: {
       ...pluginJs.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
       ...pluginVue.configs["flat/essential"].rules,
+      ...pluginCypress.configs.recommended.rules,
     },
   },
 ];
