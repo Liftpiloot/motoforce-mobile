@@ -2,7 +2,7 @@
 
 import StandardButton from "@/components/UI/StandardButton.vue";
 
-let props = defineProps(
+const props = defineProps(
     {
         type: {
             type: String as () => 'positive' | 'negative' | 'neutral',

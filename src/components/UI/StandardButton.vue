@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-let props = defineProps(
+const props = defineProps(
     {
       content: {
         type: String,

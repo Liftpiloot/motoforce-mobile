@@ -10,15 +10,15 @@ import router from "@/router";
 
 const webRoute = useRoute();
 const loading = ref(false);
-let routeId: number = parseInt(webRoute.params.routeId as string);
-let route = ref<Route>();
-let maxLean = ref(0);
-let maxG = ref(0);
-let maxSpeed = ref(0);
+const routeId: number = parseInt(webRoute.params.routeId as string);
+const route = ref<Route>();
+const maxLean = ref(0);
+const maxG = ref(0);
+const maxSpeed = ref(0);
 
-let highscoreSpeed = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
-let highscoreLean = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
-let highscoreG = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
+const highscoreSpeed = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
+const highscoreLean = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
+const highscoreG = ref<{ score: number, isHighScore: boolean }>({score: 0, isHighScore: false});
 
 const errorMessage = ref<string | null>(null);
 const emptyRoute = ref(false);
@@ -99,8 +99,8 @@ const deleteRoute = async () => {
 };
 
 const drawMap = () => {
-  var canvas = document.body.querySelector("#map") as HTMLCanvasElement;
-  var ctx = canvas.getContext("2d");
+  const canvas = document.body.querySelector("#map") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d");
 
   // Function to transform latitude and longitude to canvas coordinates
   function transformCoordinates(lat: number, lon: number, minLat: number, maxLat: number, minLon: number, maxLon: number, canvasWidth: number, canvasHeight: number) {
